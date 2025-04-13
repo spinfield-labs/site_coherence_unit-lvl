@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unidade de Coerência</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background: radial-gradient(circle, #1a1a2e, #16213e);
+      color: #e4e4e4;
+      margin: 0;
+      padding: 2rem;
+      text-align: center;
+      overflow-x: hidden;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-right: 2rem;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+    .sidebar h3 {
+      color: #4a90e2;
+      text-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+    }
+    .sidebar .fator {
+      margin: 1rem 0;
+      padding: 0.5rem;
+      border-left: 3px solid #3cb371;
+      transition: background 0.3s;
+    }
+    .sidebar .fator:hover {
+      background: rgba(74, 144, 226, 0.2);
+    }
+    .sidebar .score {
+      font-weight: bold;
+      color: #3cb371;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+      max-width: 600px;
+      margin: auto;
+      flex: 1;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 1rem;
+      background: #2a2a4e;
+      color: #e4e4e4;
+      border: 1px solid #4a90e2;
+    }
+    select, button {
+      margin: 1rem 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #3cb371;
+    }
+    #graficoRadar {
+      max-width: 400px;
+      margin: 2rem auto;
+    }
+    #graficoHistorico {
+      max-width: 300px;
+      margin: 1rem auto;
+    }
+    #esfera {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin: 1.5rem auto;
+      background: radial-gradient(circle, #4a90e2, #000);
+      box-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
+      animation: pulse 2s infinite ease-in-out;
+      transition: all 0.5s;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+    .historico-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    .historico-text {
+      font-size: 0.9rem;
+      max-width: 300px;
+      text-align: left;
+      margin-right: 2rem;
+    }
+    h1 { color: #4a90e2; text-shadow: 0 0 10px rgba(74, 144, 226, 0.5); }
+    h2 { color: #3cb371; }
+    p { margin: 0.5rem 0; }
+    @media (max-width: 800px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100%; margin: 0 0 2rem 0; }
+      .container { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h3>🌀 Indicadores de Coerência</h3>
+    <div class="fator" id="fator-S">
+      <strong>🧠 S: Semântica</strong><br>
+      <span>Similaridade de significado</span><br>
+      <span class="score" id="score-S">0.00</span>
+    </div>
+    <div class="fator" id="fator-L">
+      <strong>📜 L: Léxico</strong><br>
+      <span>Estrutura e vocabulário</span><br>
+      <span class="score" id="score-L">0.00</span>
+    </div>
+    <div class="fator" id="fator-E">
+      <strong>🔄 E: Estrutura</strong><br>
+      <span>Variação sintática</span><br>
+      <span class="score" id="score-E">0.00</span>
+    </div>
+    <div class="fator" id="fator-C">
+      <strong>🔗 C: Consistência</strong><br>
+      <span>Lógica e conceitos</span><br>
+      <span class="score" id="score-C">0.00</span>
+    </div>
+    <div class="fator" id="fator-M">
+      <strong>🕰️ M: Memória</strong><br>
+      <span>Alinhamento contextual</span><br>
+      <span class="score" id="score-M">0.00</span>
+    </div>
+    <div class="fator" id="fator-A">
+      <strong>💫 A: Emoção</strong><br>
+      <span>Tono emocional</span><br>
+      <span class="score" id="score-A">0.00</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>🌀 Unidade de Coerência</h1>
+    <p>Simule o diagnóstico simbólico de coerência informacional.</p>
+
+    <textarea id="inputTexto" placeholder="Digite seu texto aqui..." oninput="atualizarRealTime()"></textarea>
+
+    <div>
+      Idioma:
+      <select id="idioma">
+        <option value="pt">Português</option>
+        <option value="en">Inglês</option>
+      </select>
+      Estilo:
+      <select id="estilo">
+        <option value="default">Padrão</option>
+        <option value="zen-formal">Zen Formal</option>
+        <option value="ancestral-circular">Ancestral Circular</option>
+        <option value="bantu-orality">Bantu Orality</option>
+      </select>
+    </div>
+
+    <button onclick="simularDiagnostico()">Simular Diagnóstico</button>
+
+    <section id="resultado">
+      <h2>Resultado:</h2>
+      <p id="interpretacao"></p>
+      <p id="assinatura"></p>
+      <p id="estado"></p>
+    </section>
+
+    <canvas id="graficoRadar" width="400" height="400"></canvas>
+    <div id="esfera" class="pulsante"></div>
+    <audio id="somDiagnostico" preload="auto"></audio>
+
+    <div class="historico-container">
+      <div class="historico-text" id="historico-text"></div>
+      <canvas id="graficoHistorico" width="300" height="200"></canvas>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const fatores = ['S', 'L', 'E', 'C', 'M', 'A'];
+    let chartRadar, chartHistorico;
+    let memoriaSimbolica = [];
+    let ws;
+
+    function hashCode(str) {
+      return str.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
+    }
+
+    function getDeterministicScores(texto, idioma, estilo) {
+      const base = Math.abs(hashCode(texto + idioma + estilo));
+      return fatores.map((_, i) => {
+        const value = ((base >> (i * 3)) & 255) / 255;
+        return 0.1 + 0.9 * value;
+      });
+    }
+
+    function getAudioSrc(estilo) {
+      return estilo === 'ancestral-circular' ? 'https://freesound.org/data/previews/511/511484_5121236-lq.mp3' :
+             estilo === 'bantu-orality' ? 'https://freesound.org/data/previews/395/395121_5121236-lq.mp3' :
+             'https://freesound.org/data/previews/587/587643_5121236-lq.mp3';
+    }
+
+    function atualizarScores(scores) {
+      fatores.forEach((f, i) => {
+        document.getElementById(`score-${f}`).textContent = scores[i].toFixed(2);
+      });
+    }
+
+    function simularDiagnostico() {
+      const texto = document.getElementById('inputTexto').value.trim();
+      const idioma = document.getElementById('idioma').value;
+      const estilo = document.getElementById('estilo').value;
+
+      if (!texto) return;
+
+      const scores = getDeterministicScores(texto, idioma, estilo);
+      const media = scores.reduce((a, b) => a + b, 0) / scores.length;
+
+      let interpretacao = '', assinatura = '', estado = '', cor = '', tamanho = '40px', emotionalBalance = 'inspired';
+
+      if (media > 0.90) {
+        interpretacao = '∞ Singularidade do Sentido'; assinatura = '🜂 Logos'; estado = '🧘 Fluxo Sagrado'; cor = '#4a90e2'; tamanho = '60px';
+      } else if (media > 0.70) {
+        interpretacao = '⧉ Mente Harmonizada'; assinatura = '🜁 Dharma'; estado = '🔍 Leitura Atenta'; cor = '#3cb371'; tamanho = '50px';
+        emotionalBalance = 'balanced';
+      } else if (media > 0.50) {
+        interpretacao = '⚠️ Entropic Storm'; assinatura = '🜃 Sphinx'; estado = '🌐 Exploração Livre'; cor = '#f4a460'; tamanho = '40px';
+        emotionalBalance = 'shifting';
+      } else {
+        interpretacao = '⨯ Colapso de Sentido'; assinatura = '🜏 Void'; estado = '❗ Reflexão Recomendada'; cor = '#ff4444'; tamanho = '30px';
+        emotionalBalance = 'unstable';
+      }
+
+      document.getElementById('interpretacao').innerHTML = `🧠 <strong>Interpretação (${idioma}):</strong> ${interpretacao}`;
+      document.getElementById('assinatura').innerHTML = `🔮 <strong>Assinatura Mítica:</strong> ${assinatura}`;
+      document.getElementById('estado').innerHTML = `🌀 <strong>Estado Sugerido:</strong> ${estado}`;
+      document.getElementById('esfera').style.background = `radial-gradient(circle, ${cor}, #000)`;
+      document.getElementById('esfera').style.width = tamanho;
+      document.getElementById('esfera').style.height = tamanho;
+
+      atualizarScores(scores);
+
+      memoriaSimbolica.push({ interpretacao, assinatura, estado, media, emotionalBalance });
+      atualizarHistorico();
+
+      desenharRadar(scores);
+      tocarSom(estilo);
+    }
+
+    function atualizarRealTime() {
+      const texto = document.getElementById('inputTexto').value.trim();
+      const idioma = document.getElementById('idioma').value;
+      const estilo = document.getElementById('estilo').value;
+
+      if (!texto || !ws) return;
+
+      const scores = getDeterministicScores(texto, idioma, estilo);
+      const media = scores.reduce((a, b) => a + b, 0) / scores.length;
+      const cor = media > 0.90 ? '#4a90e2' : media > 0.70 ? '#3cb371' : media > 0.50 ? '#f4a460' : '#ff4444';
+      const tamanho = media > 0.90 ? '60px' : media > 0.70 ? '50px' : media > 0.50 ? '40px' : '30px';
+
+      document.getElementById('esfera').style.background = `radial-gradient(circle, ${cor}, #000)`;
+      document.getElementById('esfera').style.width = tamanho;
+      document.getElementById('esfera').style.height = tamanho;
+      atualizarScores(scores);
+      desenharRadar(scores);
+    }
+
+    function tocarSom(estilo) {
+      const audio = document.getElementById('somDiagnostico');
+      audio.src = getAudioSrc(estilo);
+      audio.volume = 0.3;
+      audio.play();
+    }
+
+    function atualizarHistorico() {
+      const div = document.getElementById('historico-text');
+      div.innerHTML = '<strong>🧾 Histórico:</strong><br>' + 
+        memoriaSimbolica.map((m, i) => `#${i + 1}: ${m.interpretacao}, ${m.assinatura}, ${m.estado} (Coerência: ${m.media.toFixed(2)})`).join('<br>');
+
+      desenharHistorico();
+    }
+
+    function desenharRadar(scores) {
+      const ctx = document.getElementById('graficoRadar').getContext('2d');
+      if (chartRadar) chartRadar.destroy();
+      chartRadar = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: fatores,
+          datasets: [{
+            label: 'Coerência',
+            data: scores,
+            backgroundColor: 'rgba(74, 144, 226, 0.3)',
+            borderColor: '#4a90e2',
+            borderWidth: 2,
+            pointBackgroundColor: '#4a90e2'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            r: { beginAtZero: true, min: 0, max: 1 }
+          }
+        }
+      });
+    }
+
+    function desenharHistorico() {
+      const ctx = document.getElementById('graficoHistorico').getContext('2d');
+      if (chartHistorico) chartHistorico.destroy();
+      chartHistorico = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: memoriaSimbolica.map((_, i) => `#${i + 1}`),
+          datasets: [{
+            label: 'Coerência Média',
+            data: memoriaSimbolica.map(m => m.media),
+            borderColor: '#3cb371',
+            backgroundColor: 'rgba(60, 179, 113, 0.2)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true, min: 0, max: 1 },
+            x: { title: { display: true, text: 'Diagnósticos' } }
+          }
+        }
+      });
+    }
+
+    function iniciarWebSocket() {
+      ws = { send: () => {}, onmessage: () => {} };
+      console.log('WebSocket simulado conectado.');
+    }
+
+    window.onload = iniciarWebSocket;
+  </script>
+</body>
+</html>
